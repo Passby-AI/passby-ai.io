@@ -1,0 +1,46 @@
+/* Placeholder styling. The complete theme token system belongs to T1. */
+:root {
+  --bg: #f5f2e9;
+  --fg: #292d32;
+  --muted: #60635e;
+  --border: #ccc8bd;
+
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  line-height: 1.7;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 1rem;
+}
+
+.path {
+  color: var(--muted);
+}
+
+section {
+  margin-block-start: 2rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--border);
+}
