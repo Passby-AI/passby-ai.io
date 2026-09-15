@@ -1,46 +1,138 @@
-/* Placeholder styling. The complete theme token system belongs to T1. */
-:root {
-  --bg: #f5f2e9;
-  --fg: #292d32;
-  --muted: #60635e;
-  --border: #ccc8bd;
+@import './theme.css';
 
-  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-  line-height: 1.7;
+:root {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--line-height);
   color: var(--fg);
   background: var(--bg);
+  accent-color: var(--accent);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-width: 0;
 }
 
 main {
-  width: min(100%, 52rem);
+  width: min(100%, var(--content-width));
   margin-inline: auto;
-  padding: clamp(1.25rem, 5vw, 4rem);
+  padding: var(--page-padding);
   overflow-wrap: anywhere;
 }
 
 h1 {
-  font-size: clamp(1.5rem, 5vw, 2rem);
-  line-height: 1.3;
+  font-size: var(--text-title);
+  line-height: var(--line-height-heading);
 }
 
 h2 {
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
-.path {
+a {
+  color: var(--accent);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.15em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: var(--selection-fg);
+  background: var(--selection-bg);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--muted);
+  border-radius: 0;
+  padding: var(--space-1) var(--space-2);
+}
+
+button,
+select {
+  cursor: pointer;
+}
+
+button:enabled:hover {
+  background: var(--code-bg);
+  border-color: var(--accent);
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+::placeholder {
   color: var(--muted);
+  opacity: 1;
 }
 
-section {
-  margin-block-start: 2rem;
-  padding-block-start: 1rem;
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+code,
+kbd {
+  padding: 0.1em var(--space-1);
+  background: var(--code-bg);
+}
+
+pre {
+  padding: var(--space-3);
+  overflow-x: auto;
+  background: var(--code-bg);
+}
+
+pre code {
+  padding: 0;
+  background: transparent;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+hr {
+  margin-block: var(--space-5);
+  border: 0;
   border-block-start: 1px solid var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }

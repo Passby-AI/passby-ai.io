@@ -112,6 +112,22 @@ Do not install React/Svelte yet unless a concrete interactive implementation nee
 **Priority:** P0  
 **Dependencies:** T0
 
+**Status:** Completed on 2026-09-15.
+
+Implemented centralized semantic color, typography, and spacing tokens;
+CSS-only light/dark/system modes via root `data-theme` and `color-scheme`;
+global focus, selection, controls, code, and reduced-motion styles.
+Theme controls and persistence remain in T7.
+
+Verification: `pnpm check` reported 0 errors, warnings, or hints; `pnpm build`
+succeeded. Generated CSS contains all required theme/accessibility rules and
+the static homepage has no client-side scripts. Calculated minimum text
+contrast across page/sidebar/terminal/code backgrounds is 4.80:1 in light mode
+and 5.73:1 in dark mode; selection text is 10.12:1 and 7.32:1 respectively.
+The development homepage returned HTTP 200 with `data-theme="system"`.
+Browser visual/console and live OS-preference verification were unavailable
+in this session. Theme CSS requires `light-dark()` support (Baseline 2024).
+
 ### Scope
 
 Create the global visual foundation before feature-specific styling.
