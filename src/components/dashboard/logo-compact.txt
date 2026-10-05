@@ -1,0 +1,4 @@
+    _   AKIRA'S BLOG
+   /_\  ~/dashboard
+  / _ \ -------------
+ /_/ \_\ [nvim mode]
