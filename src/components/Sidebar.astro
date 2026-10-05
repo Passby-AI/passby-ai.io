@@ -6,8 +6,9 @@ interface Props { root: NavigationNode }
 const { root } = Astro.props;
 ---
 
-<aside class="sidebar">
+<aside id="site-sidebar" class="sidebar" data-sidebar aria-label="文件导航">
   <button class="sidebar-collapse" type="button" data-sidebar-toggle aria-expanded="true" aria-label="收起侧栏">&lt;</button>
+  <button class="sidebar-close" type="button" data-sidebar-close aria-label="关闭文件导航">关闭</button>
   <nav aria-label="文件导航">
     <a class="root-link" href={root.route} aria-label="~/ 首页">~/ <span>akira</span></a>
     <SidebarTree nodes={root.children ?? []} pathname={Astro.url.pathname} />
@@ -28,7 +29,8 @@ const { root } = Astro.props;
 
 <style>
   .sidebar { position: relative; min-width: 0; overflow-y: auto; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: var(--space-4) var(--space-3); }
-  .sidebar-collapse { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; padding: 0.1rem 0.45rem; min-height: 1.8rem; border: 0; background: transparent; }
+  .sidebar-collapse, .sidebar-close { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; padding: 0.1rem 0.45rem; min-height: 1.8rem; border: 0; background: transparent; }
+  .sidebar-close { display: none; }
   nav a { display: block; text-decoration: none; padding: var(--space-2); color: var(--fg); border-left: 2px solid transparent; }
   nav a:hover { background: var(--code-bg); }
   nav a[aria-current='page'] { background: var(--selection-bg); color: var(--accent); border-left-color: var(--accent); }
@@ -47,12 +49,27 @@ const { root } = Astro.props;
   .sidebar[data-collapsed] nav, .sidebar[data-collapsed] .sidebar-bottom { visibility: hidden; }
   .sidebar[data-collapsed] .sidebar-collapse { visibility: visible; right: 0.35rem; }
   @media (max-width: 48rem) {
-    .sidebar { border-right: 0; border-bottom: 1px solid var(--border); padding: var(--space-2) var(--space-3); overflow: visible; }
-    .sidebar-bottom p { display: none; }
-    nav { display: flex; align-items: start; gap: var(--space-2); }
-    .root-link span { display: none; }
-    .tree { display: flex; flex-wrap: wrap; gap: 0 var(--space-1); border: 0; margin: 0; padding: 0; }
-    nav a, .placeholder { font-size: var(--text-sm); padding: var(--space-2) var(--space-1); }
-    .sidebar-bottom { padding-top: var(--space-2); max-width: 15rem; }
+    .sidebar,
+    .sidebar[data-collapsed] {
+      position: fixed;
+      inset: 0 auto 3rem 0;
+      z-index: 23;
+      width: min(20rem, calc(100vw - 3rem));
+      max-width: calc(100vw - 3rem);
+      padding: var(--space-5) var(--space-3) var(--space-3);
+      overflow-x: hidden;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      border-bottom: 0;
+      visibility: hidden;
+      transform: translateX(-100%);
+      transition: transform 160ms ease, visibility 160ms ease;
+    }
+    :global(html[data-sidebar-state='open']) .sidebar { visibility: visible; transform: translateX(0); }
+    .sidebar[data-collapsed] nav,
+    .sidebar[data-collapsed] .sidebar-bottom { visibility: visible; }
+    .sidebar-collapse { display: none; }
+    .sidebar-close { display: block; }
+    .sidebar-bottom { padding-top: var(--space-5); max-width: none; }
   }
 </style>
