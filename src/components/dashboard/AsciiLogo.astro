@@ -1,14 +1,98 @@
 ---
-import logo from './logo.txt?raw';
+import wideLogo from './logo.txt?raw';
+import compactLogo from './logo-compact.txt?raw';
 ---
 <div class="logo" role="img" aria-label="AKIRA'S BLOG">
-  <pre class="ascii" aria-hidden="true">{logo.trimEnd()}</pre>
-  <p class="compact" aria-hidden="true">[ AKIRA'S BLOG ]</p>
+  <pre class="ascii ascii-wide" data-logo-variant="wide" aria-hidden="true">{wideLogo.trimEnd()}</pre>
+  <pre class="ascii ascii-compact" data-logo-variant="compact" aria-hidden="true">{compactLogo.trimEnd()}</pre>
+  <p class="text-logo" data-logo-variant="text" aria-hidden="true">[ AKIRA'S BLOG ]</p>
 </div>
 
 <style>
-  .logo { container-type: inline-size; width: 100%; color: var(--accent); }
-  .ascii { font-family: var(--font-mono); font-size: clamp(0.45rem, 1.4vw, 0.82rem); line-height: 1.2; padding: 0; background: transparent; white-space: pre; overflow: visible; letter-spacing: 0; font-variant-ligatures: none; }
-  .compact { display: none; font-weight: 700; letter-spacing: 0.05em; font-size: clamp(1rem, 5vw, 1.5rem); }
-  @container (max-width: 34rem) { .ascii { display: none; } .compact { display: block; } }
+  .logo {
+    width: 100%;
+    min-width: 0;
+    color: var(--accent);
+    overflow: clip;
+  }
+
+  [data-logo-variant] {
+    display: none;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .ascii {
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-family: var(--font-mono);
+    line-height: 1.2;
+    letter-spacing: 0;
+    white-space: pre;
+    background: transparent;
+    font-variant-ligatures: none;
+  }
+
+  .ascii-wide {
+    font-size: clamp(0.625rem, 1.4vw, 0.8125rem);
+  }
+
+  .ascii-compact {
+    font-size: 0.875rem;
+    line-height: 1.25;
+  }
+
+  .text-logo {
+    display: block;
+    font-size: clamp(1rem, 5vw, 1.375rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* Media-query fallback for browsers without container queries. */
+  @media (min-width: 48.001rem) {
+    .ascii-wide {
+      display: block;
+    }
+
+    .text-logo {
+      display: none;
+    }
+  }
+
+  @supports (container-type: inline-size) {
+    .logo {
+      container-name: dashboard-logo;
+      container-type: inline-size;
+    }
+
+    .ascii-wide {
+      display: block;
+    }
+
+    .text-logo {
+      display: none;
+    }
+
+    @container dashboard-logo (max-width: 39.999rem) {
+      .ascii-wide {
+        display: none;
+      }
+
+      .ascii-compact {
+        display: block;
+      }
+    }
+
+    @container dashboard-logo (max-width: 15.999rem) {
+      .ascii-compact {
+        display: none;
+      }
+
+      .text-logo {
+        display: block;
+      }
+    }
+  }
 </style>
