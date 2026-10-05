@@ -16,6 +16,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "pretest:responsive": "pnpm build",
+    "test:responsive": "node scripts/run-responsive-tests.mjs",
     "test:content-build": "node scripts/verify-content-builds.mjs",
     "test:publishing": "node scripts/verify-publishing.mjs",
     "verify:search": "node --experimental-strip-types scripts/verify-search.mjs",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.63.0",
     "@types/mdast": "^4.0.4",
     "@types/node": "24.10.1",
     "pagefind": "^1.5.2",
