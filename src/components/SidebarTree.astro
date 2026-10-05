@@ -1,5 +1,6 @@
 ---
 import type { NavigationNode } from '../lib/navigation-model';
+import { containsCurrentRoute } from '../lib/navigation-tree';
 import { isCurrentRoute } from '../lib/routes';
 import SidebarTree from './SidebarTree.astro';
 interface Props { nodes: NavigationNode[]; pathname: string }
@@ -8,7 +9,7 @@ const current = (route?: string) => route && isCurrentRoute(pathname, route) ? '
 ---
 <ul class="tree-children">
   {nodes.map((node) => <li>
-    {node.children && node.children.length > 0 ? <details>
+    {node.children && node.children.length > 0 ? <details open={containsCurrentRoute(node, pathname)}>
       <summary>{node.name}</summary>
       {node.route && <a class="directory-route" href={node.route} aria-current={current(node.route)}>{node.title}</a>}
       <SidebarTree nodes={node.children} pathname={pathname} />
@@ -16,15 +17,34 @@ const current = (route?: string) => route && isCurrentRoute(pathname, route) ? '
   </li>)}
 </ul>
 <style>
-  .tree-children { list-style: none; padding: 0 0 0 var(--space-2); margin: 0; border-left: 1px solid var(--border); }
-  a, .directory, summary { display: block; padding: var(--space-2); color: var(--fg); text-decoration: none; overflow-wrap: anywhere; }
+  .tree-children {
+    inline-size: 100%;
+    min-inline-size: 0;
+    list-style: none;
+    padding: 0 0 0 var(--space-2);
+    margin: 0;
+    border-left: 1px solid var(--border);
+  }
+  li, details { min-inline-size: 0; max-inline-size: 100%; }
+  a, .directory, summary {
+    display: flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    padding: var(--space-2);
+    color: var(--fg);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+  }
   summary { cursor: pointer; list-style: none; color: var(--muted); }
   summary::-webkit-details-marker { display: none; }
-  summary::before { content: '▸ '; color: var(--muted); }
-  details[open] > summary::before { content: '▾ '; }
+  summary::before { content: '▸'; flex: 0 0 auto; margin-right: var(--space-1); color: var(--muted); }
+  details[open] > summary::before { content: '▾'; }
   .directory-route { font-size: var(--text-sm); color: var(--muted); }
   a:hover { background: var(--code-bg); }
   a[aria-current='page'] { background: var(--selection-bg); color: var(--accent); }
   .directory { color: var(--muted); }
-  @media (max-width: 48rem) { .tree-children { display: none; } }
 </style>
