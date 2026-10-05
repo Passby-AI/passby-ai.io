@@ -3,6 +3,8 @@ node_modules/
 dist/
 .astro/
 .pnpm-store/
+playwright-report/
+test-results/
 
 # Local configuration and secrets
 .env
