@@ -29,7 +29,7 @@ async function firstPostLink(sidebar: Locator) {
   for (let index = 0; index < await links.count(); index += 1) {
     const link = links.nth(index);
     const pathname = new URL((await link.getAttribute('href')) ?? '/', 'http://example.test').pathname;
-    if (!pathname.endsWith('/posts/')) return link;
+    if (!pathname.endsWith('/posts/') && await link.isVisible()) return link;
   }
   throw new Error('The shared sidebar tree did not expose a post route.');
 }
@@ -41,6 +41,7 @@ for (const viewport of mobileViewports) {
     test('drawer, tree, focus and logo remain usable', async ({ page }) => {
       await page.goto('/');
       await expectNoHorizontalOverflow(page);
+      expect(await visibleLogoVariants(page)).toHaveLength(1);
 
       const opener = page.locator('[data-sidebar-open]');
       const sidebar = page.locator('[data-sidebar]');
@@ -54,6 +55,9 @@ for (const viewport of mobileViewports) {
       await expect(sidebar).toBeVisible();
       await expect(sidebar.locator('.tree-children').first()).toBeVisible();
 
+      await expect.poll(async () => (await sidebar.boundingBox())?.x ?? Number.NEGATIVE_INFINITY, {
+        message: 'drawer should finish entering the viewport',
+      }).toBeGreaterThanOrEqual(-1);
       const box = await sidebar.boundingBox();
       expect(box, 'open drawer must have geometry').not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(-1);
@@ -66,6 +70,14 @@ for (const viewport of mobileViewports) {
       await expect(sidebar).toBeHidden();
 
       await opener.click();
+      await expect.poll(async () => (await sidebar.boundingBox())?.x ?? Number.NEGATIVE_INFINITY, {
+        message: 'reopened drawer should finish entering the viewport',
+      }).toBeGreaterThanOrEqual(-1);
+      for (let depth = 0; depth < 10; depth += 1) {
+        const nextDirectory = sidebar.locator('details:not([open]) > summary:visible').first();
+        if (await nextDirectory.count() === 0) break;
+        await nextDirectory.click();
+      }
       const postLink = await firstPostLink(sidebar);
       await postLink.click();
       await expect(page.locator('[data-sidebar-open]')).toBeVisible();
@@ -74,7 +86,6 @@ for (const viewport of mobileViewports) {
       await expect(active).toBeVisible();
       await expect(active.locator('xpath=ancestor::details[not(@open)]')).toHaveCount(0);
 
-      expect(await visibleLogoVariants(page)).toHaveLength(1);
       await expectNoHorizontalOverflow(page);
     });
   });
