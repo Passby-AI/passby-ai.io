@@ -3,7 +3,13 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join, relative, sep } from 'node:path';
 
 const root = resolve(process.argv[2] ?? 'dist');
-const base = `/${(process.argv[3] ?? '').replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
+function deploymentBase() {
+  if (process.env.BASE_PATH !== undefined) return process.env.BASE_PATH;
+  const [owner, repository] = (process.env.GITHUB_REPOSITORY ?? '').split('/');
+  if (!owner || !repository || repository.toLowerCase() === `${owner.toLowerCase()}.github.io`) return '/';
+  return `/${repository}/`;
+}
+const base = `/${(process.argv[3] ?? deploymentBase()).replace(/^\/+|\/+$/g, '')}/`.replace('//', '/');
 function walk(dir) {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);
