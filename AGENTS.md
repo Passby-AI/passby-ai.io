@@ -412,7 +412,7 @@ src/content/
 Astro build
 ```
 
-The original workspace convention uses the Obsidian `archived` tag to identify notes that should be imported/published. Preserve that behavior unless the user explicitly changes the publishing rule.
+As explicitly updated by the user on 2026-09-19, the workspace convention uses the Obsidian `status: archived` field to identify notes that should be imported/published. Preserve that behavior unless the user explicitly changes the publishing rule.
 
 The adapter must be configurable enough that the publish-selection rule can later change without rewriting the entire content layer.
 
@@ -774,7 +774,7 @@ Before marking an implementation task complete, verify as applicable:
 ### Content
 
 - existing Obsidian-style frontmatter remains accepted
-- publishable `archived` notes are detected correctly
+- publishable `status: archived` notes are detected correctly
 - original Obsidian notes are not modified
 - generated blog content is deterministic
 - wikilinks/assets are handled or produce explicit warnings

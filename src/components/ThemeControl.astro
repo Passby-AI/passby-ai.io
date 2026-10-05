@@ -1,0 +1,15 @@
+<div class="theme-control">
+  <label for="theme-mode">主题</label>
+  <select id="theme-mode" data-theme-control disabled>
+    <option value="system">跟随系统</option>
+    <option value="light">浅色</option>
+    <option value="dark">深色</option>
+  </select>
+  <noscript><small>当前跟随系统；切换主题需要 JavaScript。</small></noscript>
+</div>
+
+<style>
+  .theme-control { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; font-size: var(--text-sm); }
+  label { color: var(--muted); }
+  select { min-height: 2.5rem; flex: 1; }
+</style>

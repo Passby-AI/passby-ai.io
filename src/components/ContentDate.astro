@@ -1,0 +1,6 @@
+---
+import { dateAttribute, formatDateTime, type DatePrecision } from '../lib/content-model';
+interface Props { date: Date; precision: DatePrecision }
+const { date, precision } = Astro.props;
+---
+<time datetime={dateAttribute(date, precision)}>{formatDateTime(date, precision)}</time>

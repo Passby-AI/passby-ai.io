@@ -1,0 +1,13 @@
+---
+import { render } from 'astro:content';
+import type { InferGetStaticPropsType } from 'astro';
+import { getPosts } from '../../lib/posts';
+import PostLayout from '../../layouts/PostLayout.astro';
+export async function getStaticPaths() {
+  return (await getPosts()).map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<PostLayout entry={post.data}><Content /></PostLayout>

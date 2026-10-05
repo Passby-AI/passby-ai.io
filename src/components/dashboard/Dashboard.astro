@@ -1,0 +1,33 @@
+---
+import AsciiLogo from './AsciiLogo.astro';
+import RecentPosts from './RecentPosts.astro';
+import type { getPosts } from '../../lib/posts';
+import type { NavigationNode } from '../../lib/navigation-model';
+interface Props { posts: Awaited<ReturnType<typeof getPosts>>; navigation: NavigationNode }
+const { posts, navigation } = Astro.props;
+---
+<div class="dashboard">
+  <header>
+    <p class="eyebrow">~/ <span>home</span></p>
+    <AsciiLogo />
+  </header>
+  <RecentPosts posts={posts} />
+  <nav class="shortcuts" aria-label="仪表盘导航">
+    {navigation.children?.filter((node) => node.route).map((node) =>
+      <a href={node.route}><code>open {node.path}</code><span>{node.title}</span></a>)}
+    <button type="button" data-terminal-command="help" disabled><code>help</code><span>查看终端命令</span></button>
+  </nav>
+  <p class="keyboard-hint"><kbd>Ctrl</kbd> + <kbd>`</kbd> 打开终端 <span aria-hidden="true">·</span> <kbd>Esc</kbd> 关闭</p>
+  <noscript><p class="muted">终端需要 JavaScript；文章和导航链接仍可直接使用。</p></noscript>
+</div>
+<style>
+  header { padding-bottom: var(--space-4); }
+  .eyebrow { margin-top: 0; }
+  .eyebrow span { color: var(--muted); }
+  .shortcuts { display: grid; gap: var(--space-2); padding-block: var(--space-4); border-bottom: 1px solid var(--border); }
+  .shortcuts a, .shortcuts button { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2) 0; text-align: start; border: 0; text-decoration: none; background: transparent; }
+  .shortcuts code { background: transparent; padding: 0; color: var(--accent); }
+  .shortcuts span { font-size: var(--text-sm); color: var(--muted); }
+  .shortcuts a:hover, .shortcuts button:enabled:hover { background: var(--code-bg); }
+  .keyboard-hint { color: var(--muted); font-size: var(--text-sm); }
+</style>

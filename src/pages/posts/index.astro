@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts } from '../../lib/posts';
+import { postRoute } from '../../lib/routes';
+import ContentDate from '../../components/ContentDate.astro';
+const posts = await getPosts();
+---
+
+<BaseLayout title="归档 — Akira's Blog">
+  <header class="index-header"><p class="eyebrow">~/posts/</p><h1>归档</h1><p class="muted">{posts.length} 篇记录，按创建时间排列。</p></header>
+  <ul class="post-list">
+    {posts.map((post) => <li>
+      <a href={postRoute(post.data.slug)}>{post.data.title}</a>
+      <div class="post-date"><ContentDate date={post.data.created} precision={post.data.createdPrecision} />{post.data.createdPrecision === 'time' && ' UTC+8'}</div>
+      {post.data.description && <p>{post.data.description}</p>}
+      {post.data.categories.length > 0 && <span class="category">{post.data.categories.join(' / ')}</span>}
+    </li>)}
+  </ul>
+  {posts.length === 0 && <p>这里还没有公开的文章。</p>}
+</BaseLayout>
+
+<style>
+  .post-list { list-style: none; padding: 0; }
+  li { padding-block: var(--space-4); border-bottom: 1px solid var(--border); }
+  li > a { font-family: var(--font-prose); font-size: 1.35rem; }
+  .post-date { margin-top: var(--space-2); font-size: var(--text-sm); color: var(--muted); }
+  li > p { font-family: var(--font-prose); margin-block: var(--space-2); }
+  .category { font-size: var(--text-sm); color: var(--muted); }
+</style>

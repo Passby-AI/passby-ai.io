@@ -1,27 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Dashboard from '../components/dashboard/Dashboard.astro';
+import { getPosts } from '../lib/posts';
+import { getNavigation } from '../lib/navigation';
+const [posts, navigation] = await Promise.all([getPosts(), getNavigation()]);
 ---
 
-<BaseLayout title="Akira's Blog">
-  <header>
-    <p class="path">~/</p>
-    <h1>AKIRA'S BLOG</h1>
-    <p>记录学习、编程与思考。</p>
-  </header>
-  <section aria-labelledby="status-heading">
-    <h2 id="status-heading">博客建设中</h2>
-    <p>这里将成为一个以 Markdown 为内容源的终端风格个人博客。</p>
-  </section>
+<BaseLayout title="Akira's Blog" navigation={navigation}>
+  <Dashboard posts={posts} navigation={navigation} />
 </BaseLayout>
-
-<style>
-  .path {
-    color: var(--muted);
-  }
-
-  section {
-    margin-block-start: var(--space-5);
-    padding-block-start: var(--space-3);
-    border-block-start: 1px solid var(--border);
-  }
-</style>

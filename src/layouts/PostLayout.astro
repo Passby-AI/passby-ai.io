@@ -1,0 +1,37 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { BlogEntry } from '../lib/content-model';
+import ContentDate from '../components/ContentDate.astro';
+import { homeRoute, postsRoute } from '../lib/routes';
+import '../styles/prose.css';
+
+interface Props { entry: BlogEntry; kind?: 'post' | 'page' }
+const { entry, kind = 'post' } = Astro.props;
+---
+
+<BaseLayout title={`${entry.title} — Akira's Blog`} description={entry.description}>
+  <article data-pagefind-body>
+    <header class="article-header">
+      <a class="back-link" href={kind === 'post' ? postsRoute() : homeRoute()}>{kind === 'post' ? '← posts/' : '← ~/'}</a>
+      <h1 data-pagefind-meta="title">{entry.title}</h1>
+      <div class="metadata">
+        <span>创建于 <ContentDate date={entry.created} precision={entry.createdPrecision} /></span>
+        {entry.updated && <span>更新于 <ContentDate date={entry.updated} precision={entry.updatedPrecision} /></span>}
+        {(entry.createdPrecision === 'time' || (entry.updated && entry.updatedPrecision === 'time')) && <span>UTC+8</span>}
+      </div>
+      {(entry.categories.length > 0 || entry.tags.length > 0) && <div class="metadata labels">
+        {entry.categories.length > 0 && <span>分类 / {entry.categories.join(' · ')}</span>}
+        {entry.tags.length > 0 && <span>标签 / {entry.tags.join(' · ')}</span>}
+      </div>}
+    </header>
+    <div class="prose"><slot /></div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-header { border-bottom: 1px solid var(--border); padding-bottom: var(--space-4); margin-bottom: var(--space-5); }
+  h1 { font-family: var(--font-prose); margin-block: var(--space-4); }
+  .metadata { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); font-size: var(--text-sm); color: var(--muted); }
+  .labels { margin-top: var(--space-2); }
+  .back-link { font-size: var(--text-sm); }
+</style>

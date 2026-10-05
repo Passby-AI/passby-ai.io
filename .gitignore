@@ -9,6 +9,7 @@ dist/
 .env.*
 !.env.example
 *.local
+obsidian.local.json
 
 # Logs and temporary files
 *.log
@@ -20,3 +21,7 @@ Desktop.ini
 *.swp
 *.swo
 .idea/
+.worktrees/
+
+# Download archives are local backups; font sources/licenses and webfonts are tracked.
+assets/**/*.zip

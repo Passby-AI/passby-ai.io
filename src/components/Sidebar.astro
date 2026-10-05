@@ -1,0 +1,58 @@
+---
+import type { NavigationNode } from '../lib/navigation-model';
+import ThemeControl from './ThemeControl.astro';
+import SidebarTree from './SidebarTree.astro';
+interface Props { root: NavigationNode }
+const { root } = Astro.props;
+---
+
+<aside class="sidebar">
+  <button class="sidebar-collapse" type="button" data-sidebar-toggle aria-expanded="true" aria-label="收起侧栏">&lt;</button>
+  <nav aria-label="文件导航">
+    <a class="root-link" href={root.route} aria-label="~/ 首页">~/ <span>akira</span></a>
+    <SidebarTree nodes={root.children ?? []} pathname={Astro.url.pathname} />
+  </nav>
+  <div class="sidebar-bottom"><ThemeControl /></div>
+</aside>
+
+<script>
+  const sidebar = document.querySelector<HTMLElement>('.sidebar');
+  const toggle = sidebar?.querySelector<HTMLButtonElement>('[data-sidebar-toggle]');
+  toggle?.addEventListener('click', () => {
+    const collapsed = sidebar?.toggleAttribute('data-collapsed');
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    toggle.setAttribute('aria-label', collapsed ? '展开侧栏' : '收起侧栏');
+    toggle.textContent = collapsed ? '>' : '<';
+  });
+</script>
+
+<style>
+  .sidebar { position: relative; min-width: 0; overflow-y: auto; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: var(--space-4) var(--space-3); }
+  .sidebar-collapse { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; padding: 0.1rem 0.45rem; min-height: 1.8rem; border: 0; background: transparent; }
+  nav a { display: block; text-decoration: none; padding: var(--space-2); color: var(--fg); border-left: 2px solid transparent; }
+  nav a:hover { background: var(--code-bg); }
+  nav a[aria-current='page'] { background: var(--selection-bg); color: var(--accent); border-left-color: var(--accent); }
+  .root-link { font-weight: 700; }
+  .root-link span { color: var(--muted); font-weight: 400; margin-left: var(--space-2); }
+  ul { list-style: none; padding: 0; margin: 0; }
+  .tree { margin-left: var(--space-3); padding-left: var(--space-2); border-left: 1px solid var(--border); }
+  .files { padding-left: var(--space-2); }
+  .files a { font-size: var(--text-sm); overflow-wrap: anywhere; }
+  .file-marker { color: var(--muted); }
+  .placeholder { display: block; padding: var(--space-2); color: var(--muted); }
+  .placeholder small { display: block; font-size: 0.7rem; }
+  .sidebar-bottom { margin-top: auto; padding-top: var(--space-5); }
+  .sidebar-bottom p { color: var(--muted); font-size: 0.75rem; }
+  .sidebar[data-collapsed] { width: 2.5rem; padding-inline: var(--space-1); overflow: hidden; }
+  .sidebar[data-collapsed] nav, .sidebar[data-collapsed] .sidebar-bottom { visibility: hidden; }
+  .sidebar[data-collapsed] .sidebar-collapse { visibility: visible; right: 0.35rem; }
+  @media (max-width: 48rem) {
+    .sidebar { border-right: 0; border-bottom: 1px solid var(--border); padding: var(--space-2) var(--space-3); overflow: visible; }
+    .sidebar-bottom p { display: none; }
+    nav { display: flex; align-items: start; gap: var(--space-2); }
+    .root-link span { display: none; }
+    .tree { display: flex; flex-wrap: wrap; gap: 0 var(--space-1); border: 0; margin: 0; padding: 0; }
+    nav a, .placeholder { font-size: var(--text-sm); padding: var(--space-2) var(--space-1); }
+    .sidebar-bottom { padding-top: var(--space-2); max-width: 15rem; }
+  }
+</style>

@@ -1,0 +1,24 @@
+.prose {
+  font-family: var(--font-prose);
+  font-size: 1.2rem;
+  line-height: 1.9;
+}
+.prose > :first-child { margin-top: 0; }
+.prose h2 { font-size: 1.5rem; margin-top: 2em; }
+.prose h3 { font-size: 1.3rem; margin-top: 1.6em; }
+.prose h2, .prose h3, .prose h4 { line-height: var(--line-height-heading); scroll-margin-top: var(--space-4); }
+.prose p, .prose ul, .prose ol, .prose pre, .prose blockquote { margin-block: 1.2em; }
+.prose li + li { margin-top: 0.3em; }
+.prose blockquote { margin-inline: 0; padding-inline: var(--space-4); border-left: 3px solid var(--accent); color: var(--muted); }
+.prose pre { max-width: 100%; line-height: 1.65; border: 1px solid var(--border); overflow-wrap: normal; tab-size: 2; }
+.prose code { font-family: var(--font-mono); font-size: 0.875rem; }
+.prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 1.05rem; }
+.prose th, .prose td { border: 1px solid var(--border); padding: var(--space-2) var(--space-3); text-align: start; }
+.prose th { background: var(--code-bg); }
+.prose input[type='checkbox'] { margin-right: var(--space-2); }
+
+/* Shiki emits both palettes; color-scheme selects one without extra JS. */
+.astro-code, .astro-code span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark)) !important;
+  background-color: var(--code-bg) !important;
+}

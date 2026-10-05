@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { searchRoute, withBase } from '../lib/routes';
+---
+<BaseLayout title="搜索 — Akira's Blog">
+  <h1>搜索 / search</h1>
+  <form action={searchRoute()} role="search" data-search-form data-pagefind-url={withBase('pagefind/pagefind.js')}>
+    <label for="search-query">搜索文章和页面</label>
+    <div class="search-row"><input type="search" id="search-query" name="q" required maxlength="500" /><button type="submit">搜索</button></div>
+  </form>
+  <p role="status" data-search-status>输入关键词搜索已发布内容。</p>
+  <noscript>全文搜索需要启用 JavaScript；也可通过侧栏浏览文章。</noscript>
+  <ol data-search-results></ol>
+  <button type="button" data-search-more hidden>显示更多</button>
+</BaseLayout>
+<script>
+  import '../scripts/search';
+</script>
+<style>
+  form { margin-block: var(--space-4); }
+  label { display: block; margin-bottom: var(--space-2); }
+  .search-row { display: flex; gap: var(--space-2); }
+  input { min-width: 0; width: 100%; padding: var(--space-2); border: 1px solid var(--border); background: var(--bg); color: var(--fg); }
+  button { min-height: 2.75rem; white-space: nowrap; }
+  :global([data-search-results] li) { padding-block: var(--space-3); border-bottom: 1px solid var(--border); }
+  :global([data-search-results] p) { color: var(--muted); overflow-wrap: anywhere; }
+</style>

@@ -1,0 +1,14 @@
+---
+import { render } from 'astro:content';
+import type { InferGetStaticPropsType } from 'astro';
+import { getPages } from '../lib/posts';
+import PostLayout from '../layouts/PostLayout.astro';
+import FontCredits from '../components/FontCredits.astro';
+export async function getStaticPaths() {
+  return (await getPages()).map((page) => ({ params: { slug: page.data.slug }, props: { page } }));
+}
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+<PostLayout entry={page.data} kind="page"><Content />{page.data.slug === 'about' && <FontCredits />}</PostLayout>

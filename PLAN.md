@@ -171,6 +171,14 @@ Use a restrained terminal/editor aesthetic. Avoid UI-library defaults, glassmorp
 **Priority:** P0  
 **Dependencies:** T0
 
+**Status:** Implemented and locally verified on 2026-09-16.
+
+Added `posts` / `pages`, three Obsidian-style sample posts and `about.md`.
+Null/scalar/list metadata is normalized; required dates and titles are validated.
+An Astro glob-loader wrapper preserves unquoted YAML timestamps before date
+normalization (Asia/Shanghai for timestamps without a zone). Duplicate slugs
+fail with both source paths; filenames, not titles, determine default slugs.
+
 ### Scope
 
 Create Astro content collections for the content types actually needed by the MVP.
@@ -216,6 +224,12 @@ Add 2–3 sample Markdown posts using the user's existing Obsidian-style frontma
 **Priority:** P0  
 **Dependencies:** T2
 
+**Status:** Implemented and locally verified on 2026-09-16.
+
+All navigation uses `src/lib/routes.ts`; content-derived sidebar data lives in
+`src/lib/navigation.ts` for later terminal/search reuse. Root and
+`/terminal_blog/` production builds passed link/font/asset verification.
+
 ### Scope
 
 Create one route-generation layer used everywhere.
@@ -249,6 +263,13 @@ The implementation must remain valid when GitHub Pages hosts the project under a
 **Priority:** P0  
 **Dependencies:** T2, T3
 
+**Status:** Implemented and locally verified on 2026-09-16.
+
+Static index, three post routes and a content-backed about page include dates,
+metadata, Markdown typography and Shiki light/dark highlighting. Shared published
+queries omit drafts; build-level fixtures verified invalid dates, duplicate
+slugs and draft exclusion. No Obsidian vault is read or modified at this stage.
+
 ### Scope
 
 Implement:
@@ -279,6 +300,14 @@ Do not over-design article pages. Reading quality takes priority over terminal d
 
 **Priority:** P0  
 **Dependencies:** T1, T3
+
+**Status:** Implemented on 2026-09-16; browser visual verification pending.
+
+Shared grid shell has sidebar, independently scrolling reading region and status
+bar. The initially reserved terminal slot was filled by T13's terminal component;
+an opened desktop terminal takes grid space rather than overlaying the content.
+Mobile uses a compact navigation area and normal document scrolling. Navigation
+uses native browser links; no client router or duplicated shell state was added.
 
 ### Scope
 
@@ -313,6 +342,12 @@ Create:
 **Priority:** P0  
 **Dependencies:** T3, T5
 
+**Status:** Implemented on 2026-09-16; browser keyboard verification pending.
+
+Sidebar derives real routes and published post children from shared navigation
+data, marks the current route with `aria-current`, and shows projects/notes as
+non-link placeholders. Mobile retains the home, posts and about destinations.
+
 ### Scope
 
 Implement a navigation sidebar that visually resembles a small file tree.
@@ -343,6 +378,14 @@ Only expose real routes as clickable destinations.
 **Priority:** P1  
 **Dependencies:** T1, T5
 
+**Status:** Implemented on 2026-09-16; browser/OS visual verification pending.
+
+Synchronous head script restores light/dark/system before paint. Native select,
+local storage, storage events and back/forward-cache restoration share
+`window.blogTheme.get()/set()`. CSS handles OS preference changes in system mode.
+VM tests cover persistence, all modes, invalid storage, blocked storage and
+GUI/API agreement; this does not replace real browser visual verification.
+
 ### Scope
 
 Add a theme control supporting:
@@ -371,6 +414,12 @@ Avoid a flash of the wrong theme where practical.
 **Priority:** P1  
 **Dependencies:** T1
 
+**Status:** Implemented on 2026-09-16; browser visual verification pending.
+
+Stored selectable text logo is rendered by `AsciiLogo.astro`; a container-width
+fallback displays compact text on narrow layouts. No runtime logo dependency.
+The homepage now composes this logo with the T9 recent-post dashboard.
+
 ### Scope
 
 Create a stored ASCII/text logo for:
@@ -390,10 +439,53 @@ The logo may be generated externally once, but should be committed as text/sourc
 
 ---
 
+## T8a — Self-host reading and monospace fonts (added by user)
+
+**Priority:** P1
+
+**Dependencies:** T1, T4, T5
+
+**Status:** Implemented and font data verified on 2026-09-16; browser visual verification pending.
+
+### Scope / result
+
+- Read-only original font downloads remain under `assets/`.
+- Article text uses LXGW WenKai 1.522; terminal region and Markdown code use
+  0xProto Nerd Font Mono (Regular/Bold/Italic, Nerd Fonts 3.5.1).
+- The supplied `LICENSE` is the OFL license; it does not need an `OFL.txt` filename.
+- Generated WOFF2 files, Unicode-range CSS and font documentation live in `assets/`.
+- WenKai is split into 491 on-demand ranges; all 46,490 characters are preserved.
+  Each Mono face preserves all 11,631 characters, including Nerd Font symbols.
+- Vite emits base-aware local font URLs. Normal builds need no font downloads,
+  Python runtime, or external font CDN. Licenses and icon attribution are linked
+  from the about page. Optional regeneration: `scripts/prepare-fonts.py`.
+
+### Batch verification (T2–T8 + T8a)
+
+- `pnpm install --frozen-lockfile --offline` passed in a clean directory containing
+  only the manifest and lockfile, using the local pnpm cache.
+- `pnpm test`: 11 tests passed; `pnpm check`: zero errors/warnings/hints.
+- `pnpm test:content-build`: duplicate slug and invalid date fail clearly;
+  draft route and sidebar/index exposure are excluded.
+- Static builds at `/` and `/terminal_blog/` passed generated link/asset checks.
+- FontTools successfully parsed all supplied TTFs and verified that WOFF2
+  conversion preserves the complete encoded character set of each selected face.
+- Browser tools reported no available browser. Desktop/mobile appearance, actual
+  font rendering, keyboard interaction, console and live OS-theme behavior still
+  require a browser pass; they are not claimed as verified here.
+
+---
+
 ## T9 — Build Neovim-style homepage dashboard
 
 **Priority:** P0  
 **Dependencies:** T4, T5, T8
+
+**Status:** Implemented and automatically verified on 2026-09-16; browser visual review pending.
+
+Homepage now renders the stored logo, identity, up to five published posts sorted
+by creation date, timestamps, canonical links, shared-tree navigation hints and
+terminal controls. No client JavaScript is needed for the article list itself.
 
 ### Scope
 
@@ -425,6 +517,14 @@ Recent posts should come from the content collection and be ordered by date.
 
 **Priority:** P0  
 **Dependencies:** T2, T3
+
+**Status:** Implemented and automatically verified on 2026-09-16.
+
+`navigation-model.ts` builds one tree from published content; the layout passes
+that exact tree to both sidebar and terminal. `terminal/filesystem.ts` implements
+root/relative path resolution, dot/parent traversal, listing, tree output and
+canonical-route lookup. Nonexistent intermediate segments and traversal through
+files fail explicitly. Projects/notes remain empty directories without routes.
 
 ### Scope
 
@@ -459,6 +559,13 @@ Provide operations needed later by the terminal:
 
 **Priority:** P0  
 **Dependencies:** T10
+
+**Status:** Implemented and automatically verified on 2026-09-16.
+
+Pure parser supports whitespace, Unicode, single/double quotes and escaping,
+with structured errors for incomplete syntax and unsupported shell operators.
+Map-based command registry is extensible; executor returns output/state/effects
+without accessing DOM, network or host shell.
 
 ### Scope
 
@@ -495,6 +602,14 @@ Do not implement arbitrary shell execution.
 
 **Priority:** P0  
 **Dependencies:** T11
+
+**Status:** Implemented and automatically verified on 2026-09-16.
+
+All listed commands are implemented. `cat` opens a file's canonical page; `open`
+also accepts directories with real pages; `cd` only changes the virtual cwd;
+`home` opens the dashboard and resets cwd. `clear` preserves history; `history`
+includes the current command and retains the latest 100 commands. `theme` reads
+or updates the GUI controller. `search` clearly reports unavailability until T18.
 
 ### Scope
 
@@ -538,6 +653,16 @@ Suggested interpretation:
 **Priority:** P0  
 **Dependencies:** T5, T11, T12
 
+**Status:** Implemented and automatically verified on 2026-09-16; browser keyboard/mobile review pending.
+
+Native TypeScript panel supports Ctrl+Backquote, Esc within the panel, persistent
+touch trigger, scrollable text output, labelled input, Up/Down history with draft
+restoration, IME composition protection, focus handoff and no Tab interception.
+Desktop panel takes grid space; mobile uses a bottom panel with document padding.
+Session storage retains cwd, input, open state and a bounded transcript per tab
+and deployment base. Corrupt/blocked storage fails gracefully. No framework or
+terminal emulator was added; production terminal JavaScript is approximately 10 KB.
+
 ### Scope
 
 Create the actual terminal panel.
@@ -570,6 +695,27 @@ Do not use xterm.js for the MVP.
 **Priority:** P1  
 **Dependencies:** T6, T7, T13
 
+**Status:** Implemented and automatically verified on 2026-09-16; browser navigation review pending.
+
+Terminal navigation uses URLs from the same serialized tree as the sidebar.
+Theme commands call `window.blogTheme`, and GUI changes update the terminal's
+theme indicator. Native document navigation preserves browser history; session
+restoration handles BFCache and only transfers focus after terminal navigation.
+GUI navigation preserves the terminal cwd rather than silently changing it.
+
+### Batch verification (T9–T14)
+
+- `pnpm test`: 36 tests passed, including DOM-boundary controller tests using the
+  actual terminal and theme scripts (not a real rendering browser).
+- `pnpm check`: zero errors, warnings or hints; static builds at `/` and
+  `/terminal_blog/` passed, each with 6 pages and 601 verified links/assets.
+- Build verification checks recent-post ordering, labelled terminal controls,
+  shared navigation destinations, and all generated links/scripts/fonts/assets.
+- No browser is connected to the automation tool. This issue was submitted for
+  user review before proceeding with the independent implementation and tests.
+  Desktop/mobile rendering, physical keyboard interaction and native back/forward
+  behavior are pending the checklist in `docs/terminal-acceptance.md`.
+
 ### Scope
 
 Remove accidental duplicated behavior between GUI and terminal.
@@ -591,10 +737,22 @@ Unify at least:
 
 # Milestone M5 — Obsidian Publishing Adapter
 
+2026-09-19 user-directed update: publishing now selects only `status: archived` (not tags). Missing `created` falls back to `date`; month-only dates retain month precision in generated content and all date displays. Existing timestamp frontmatter remains compatible.
+
 ## T15 — Implement minimal Obsidian sync pipeline
 
 **Priority:** P0  
 **Dependencies:** T2
+
+**Status:** Implemented and automatically verified on 2026-09-17.
+
+`pnpm sync` reads an external vault using local ignored configuration, an
+environment variable, or `--vault`. It selects a configurable `status: archived` value,
+excludes drafts, reuses the content schema/date/slug helpers, and emits managed
+post copies plus a hash manifest. Conflicts and edited generated files fail
+before output changes; repeat sync preserves unchanged files and withdraws
+previously managed content. Temporary-vault tests verify source preservation,
+idempotence, invalid metadata and duplicate routes. No real vault was supplied.
 
 ### Scope
 
@@ -611,7 +769,7 @@ For the MVP, the script should:
 1. accept/configure a vault path locally;
 2. scan Markdown notes;
 3. parse existing frontmatter;
-4. identify publishable notes using the existing `archived` convention;
+4. identify publishable notes using the `status: archived` convention;
 5. normalize metadata;
 6. derive slug from filename unless explicitly provided;
 7. write normalized copies into `src/content/...`;
@@ -655,6 +813,17 @@ Do not commit the entire private Obsidian vault merely to make CI work.
 **Priority:** P1  
 **Dependencies:** T15
 
+**Status:** Implemented and automatically verified on 2026-09-17.
+
+Markdown AST transforms resolve published notes, aliases, heading links,
+embedded images, regular relative links and reference-style attachments.
+Attachments use content-hash filenames. Ambiguous/missing/private references
+and unsupported transclusions/block references warn with source filenames;
+strict mode fails before writing. A native Astro 7 Sätteri plugin resolves
+generated URLs through the shared base helper without changing the renderer.
+Isolated builds verify root/project bases, Chinese heading links, images,
+GFM tables and draft exclusion. Source notes remain untouched.
+
 ### Scope
 
 Handle at least:
@@ -689,6 +858,14 @@ Keep this transform inside the publishing adapter, not UI components.
 **Priority:** P1  
 **Dependencies:** T15, T16
 
+**Status:** Implemented and automatically verified on 2026-09-17.
+
+`pnpm publish:check` chains strict sync, type checking, tests, static build with
+search indexing, and output verification. The actual command succeeds with an
+isolated fixture vault; an unresolved link stops it before check/build starts.
+No git commit, push, or deployment is automated. Setup, managed-file behavior,
+limitations and troubleshooting are documented in `docs/publishing.md`.
+
 ### Scope
 
 Provide a predictable local workflow, for example:
@@ -722,6 +899,18 @@ Do not automate `git push` by default without explicit user intent.
 
 **Priority:** P1  
 **Dependencies:** T4
+
+**Status:** Implemented and automatically verified on 2026-09-17;
+real-browser visual/interaction acceptance pending (no browser connected).
+
+Pagefind indexes published article/page bodies after every Astro build.
+A persistent GUI link and terminal `search <query>` open the same search page;
+query history, loading/error/empty states and incremental results are supported.
+Results resolve through the shared navigation tree, with canonical titles/URLs.
+Actual generated Pagefind JS/WASM tests find English and Chinese body text at
+both `/` and `/terminal_blog/`, with unknown destinations rejected. The dev
+server explains that production search requires build + preview. No backend
+or global UI framework was added; search loads its engine only when queried.
 
 ### Scope
 

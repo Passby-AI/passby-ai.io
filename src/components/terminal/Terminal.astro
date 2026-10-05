@@ -1,0 +1,59 @@
+---
+import type { NavigationNode } from '../../lib/navigation-model';
+interface Props { root: NavigationNode; enabled?: boolean }
+const { root, enabled = true } = Astro.props;
+// This is data, not executable code. Escape '<' so titles cannot close the tag.
+const navigationJson = JSON.stringify(root).replaceAll('<', '\\u003c');
+---
+
+<section id="terminal-panel" class="terminal-panel" aria-labelledby="terminal-heading" hidden>
+  <header class="terminal-heading">
+    <h2 id="terminal-heading">TERMINAL <span>博客导航</span></h2>
+    <div class="terminal-tools"><span data-terminal-theme>system</span><button type="button" data-terminal-close aria-label="关闭终端">关闭 <kbd>Esc</kbd></button></div>
+  </header>
+  <div class="terminal-output" data-terminal-output tabindex="0" role="log" aria-label="终端输出" aria-live="off" aria-relevant="additions text">
+    <p data-terminal-welcome>输入 help 查看命令。这里浏览的是博客的虚拟文件系统。</p>
+  </div>
+  <p class="sr-only" data-terminal-announcement role="status" aria-live="polite" aria-atomic="true"></p>
+  <form data-terminal-form autocomplete="off">
+    <label class="sr-only" for="terminal-input">终端命令</label>
+    <span class="terminal-prompt" aria-hidden="true">akira@blog:<span data-terminal-cwd>~</span>$</span>
+    <input id="terminal-input" name="command" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" maxlength="1000" enterkeyhint="send" aria-describedby="terminal-input-hint" />
+    <button type="submit">执行</button>
+  </form>
+  <p id="terminal-input-hint" class="terminal-input-hint"><span data-terminal-location>当前目录：~</span> · ↑↓ 历史 · Tab 移动焦点</p>
+</section>
+<script is:inline id="blog-navigation" type="application/json" set:html={navigationJson} />
+{enabled && <script>
+  import '../../scripts/terminal';
+</script>}
+
+<style>
+  .terminal-panel { height: min(38dvh, 24rem); min-height: 12rem; max-height: 60dvh; display: flex; flex-direction: column; min-width: 0; font-family: var(--font-mono); font-size: var(--text-sm); background: var(--terminal-bg); border-top: 1px solid var(--border); }
+  .terminal-panel[hidden] { display: none; }
+  .terminal-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); border-bottom: 1px solid var(--border); padding: var(--space-1) var(--space-3); }
+  h2 { margin: 0; font-size: var(--text-sm); font-weight: 400; color: var(--accent); }
+  h2 span { margin-left: var(--space-2); color: var(--muted); }
+  .terminal-tools { display: flex; align-items: center; gap: var(--space-3); }
+  [data-terminal-theme] { font-size: 0.75rem; color: var(--muted); }
+  .terminal-tools button { border-color: var(--border); min-height: 2rem; }
+  kbd { background: transparent; }
+  .terminal-output { flex: 1; min-height: 0; overflow: auto; padding: var(--space-2) var(--space-3); overscroll-behavior: contain; }
+  .terminal-output :global(p) { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .terminal-output :global(.terminal-command) { color: var(--accent); margin-top: var(--space-2); }
+  .terminal-output :global(.terminal-error) { color: var(--fg); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
+  [data-terminal-welcome] { color: var(--muted); }
+  form { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border); }
+  .terminal-prompt { color: var(--accent); white-space: nowrap; max-width: 45%; overflow: hidden; text-overflow: ellipsis; }
+  input { flex: 1; min-width: 0; width: 0; border-color: var(--border); background: var(--terminal-bg); }
+  form button { flex-shrink: 0; }
+  .terminal-input-hint { margin: 0; padding: 0 var(--space-3) var(--space-1); color: var(--muted); font-size: 0.7rem; overflow-wrap: anywhere; }
+  @media (max-width: 48rem) {
+    .terminal-panel { position: fixed; inset-inline: 0; bottom: 3rem; z-index: 20; height: min(45dvh, 24rem); min-height: 10rem; max-height: calc(100dvh - 3rem); }
+    h2 span, [data-terminal-theme] { display: none; }
+    form { flex-wrap: wrap; }
+    .terminal-prompt { flex-basis: 100%; max-width: 100%; }
+    input { font-size: 1rem; }
+    .terminal-tools button, form button { min-height: 2.5rem; }
+  }
+</style>

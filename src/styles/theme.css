@@ -1,7 +1,7 @@
 /* Color source of truth. Components should consume semantic tokens only.
  * Requires light-dark() support (Baseline 2024).
  * Missing data-theme or data-theme="system" follows the OS/browser preference.
- * T7 will control data-theme and persist the user's selection.
+ * The synchronous theme controller persists explicit preferences before paint.
  */
 :root {
   color-scheme: light dark;
@@ -17,7 +17,8 @@
   --selection-bg: light-dark(#d7dfce, #3b4938);
   --selection-fg: var(--fg);
 
-  --font-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  --font-mono: "0xProto Nerd Font Mono", ui-monospace, "Cascadia Code", Consolas, "Microsoft YaHei", monospace;
+  --font-prose: "LXGW WenKai", "Kaiti SC", KaiTi, serif;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-title: clamp(1.5rem, 5vw, 2rem);
