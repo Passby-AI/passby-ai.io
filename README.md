@@ -29,14 +29,17 @@ pnpm dev
 | `pnpm test:publishing` | 使用隔离副本验证完整发布和根／子路径搜索 |
 | `pnpm verify:search` | 验证实际构建的 Pagefind JS/WASM 搜索 |
 
-验证 GitHub Pages 项目子路径，无需提前确定部署地址：
+`astro.config.mjs` 在 GitHub Actions 中根据 `GITHUB_REPOSITORY` 自动配置
+GitHub Pages 的 `site` 和项目子路径 `base`；本地开发默认使用 `/`。也可以用
+`SITE_URL` 和 `BASE_PATH` 显式覆盖。验证项目子路径：
 
 ```sh
 pnpm build --base /terminal_blog/ --outDir .astro/base-verification
 node scripts/verify-build.mjs .astro/base-verification /terminal_blog/
 ```
 
-生产 `site` / `base` 和 GitHub Actions 将在 T22 / T23 按实际仓库配置。此次并未部署或推送 Git。
+推送到 `main` 后，`.github/workflows/deploy.yml` 会运行类型检查、单元测试、
+静态构建和产物校验，成功后通过 GitHub Pages 发布；也可以从 Actions 页面手动触发。
 
 ## 内容与路由
 
